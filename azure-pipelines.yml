@@ -23,7 +23,7 @@ jobs:
   - task: XamarinAndroid@1
     inputs:
       projectFile: '**/*droid*.csproj'
-      outputDirectory: '$(outputDirectory)'
+      outputDirectory: '$(build.stagingdirectory)\_PublishDroid'
       configuration: '$(buildConfiguration)'
 
   - task: AndroidSigning@3
@@ -59,3 +59,16 @@ jobs:
       configuration: 'Release'
       buildForSimulator: true
       packageApp: false
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.stagingdirectory)\_PublishiOS'
+    inputs:
+      SourceFolder: '$(system.defaultworkingdirectory)'
+      Contents: '**/*.ipa'
+      TargetFolder: '$(build.stagingdirectory)\_PublishiOS'
+    condition: succeededOrFailed()
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(build.stagingdirectory)\_PublishiOS'
+  
